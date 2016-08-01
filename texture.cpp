@@ -10,7 +10,7 @@ using namespace std;
  */
 Texture::Texture()
 {
-    myTexture = NULL;
+    myTexture = nullptr;
     myWidth = -1;
     myHeight = -1;
     myTileWidth = -1;
@@ -24,7 +24,7 @@ Texture::Texture()
  */
 Texture::~Texture()
 {
-    
+    free();
 }
 
 /**
@@ -73,9 +73,11 @@ void Texture::free()
     if(myTexture != nullptr){
         // Destroy the SDL texture
         SDL_DestroyTexture(myTexture);
-
-        // Reset all the variables.
-        // You need to do this...
+        myTexture = nullptr;
+        myWidth = -1;
+        myHeight = -1;
+        myTileWidth = -1;
+        myTileHeight = -1;
     }
 }
 
@@ -88,14 +90,15 @@ void Texture::free()
 void Texture::render(int x, int y, SDL_Rect src)
 {
     // Find the section of the texture to render
-    // SDL_Rect dest = ??????
+    SDL_Rect dest = {x, y, myWidth, myHeight};
 
+    dest.w = src.w;
+    dest.h = src.h;
     // Blit the src rectangle to the renderer
     // Note that this copies the section of the texture
     //   to the renderer's buffer - it doesn't actually
     //   put it on the screen yet.
-    // Call SDL_RenderCopy(?????)
-
+    SDL_RenderCopy(myWin.sdlRenderer, myTexture, &src, &dest);
 }
 /**
  * @brief Texture::render Render a sprite tile to the screen.
@@ -124,7 +127,13 @@ void Texture::render(int x, int y, int ssRow, int ssCol, int w, int h)
  */
 SDL_Rect Texture::getSpritePosition(int ssRow, int ssCol, int width, int height)
 {
+    SDL_Rect newRect;
+    newRect.x = ssCol * myTileWidth;
+    newRect.y = ssRow * myTileHeight;
+    newRect.w = width * myTileWidth;
+    newRect.h = height * myTileHeight;
 
+    return newRect;
 }
 
 /**
