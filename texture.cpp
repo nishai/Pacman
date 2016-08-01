@@ -10,7 +10,11 @@ using namespace std;
  */
 Texture::Texture()
 {
-
+    myTexture = NULL;
+    myWidth = -1;
+    myHeight = -1;
+    myTileWidth = -1;
+    myTileHeight = -1;
 }
 
 /**
@@ -20,7 +24,7 @@ Texture::Texture()
  */
 Texture::~Texture()
 {
-
+    
 }
 
 /**
@@ -129,7 +133,7 @@ SDL_Rect Texture::getSpritePosition(int ssRow, int ssCol, int width, int height)
  */
 int Texture::sheetWidth()
 {
-
+    return myWidth;
 }
 
 /**
@@ -137,8 +141,8 @@ int Texture::sheetWidth()
  * @return Height of the sprite sheet in pixels
  */
 int Texture::sheetHeight()
-{
-
+{   
+    return myHeight;
 }
 
 /**
@@ -147,7 +151,7 @@ int Texture::sheetHeight()
  */
 int Texture::tileWidth()
 {
-
+    return myTileWidth;
 }
 
 /**
@@ -156,7 +160,7 @@ int Texture::tileWidth()
  */
 int Texture::tileHeight()
 {
-
+    return myTileHeight;
 }
 
 /**
