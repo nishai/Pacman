@@ -1,4 +1,4 @@
-OBJS=texture.cpp window.cpp
+OBJS=texture.cpp window.cpp tile.cpp
 
 LFLAGS=-lSDL2 -lSDL2_image
 CURRDIR=`pwd`

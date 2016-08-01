@@ -3,134 +3,113 @@
     This just has the code that tests all the functions you write.
 */
 
-#include "texture.h"
+#include "window.h"
 
 #include <string>
+#include <sstream>
+#include <iostream>
 #include <thread>
 #include <chrono>
 
-#ifndef SPRITEFILENAME
-#define SPRITEFILENAME "sprites.png"
-#endif
+using namespace std;
+
+#include "tile.h"
+
+class Tex2 : public Texture{
+public:
+    bool called = false;
+    int called_x, called_y, called_sprite_row, called_sprite_col, called_sprite_width, called_sprite_height;
+    virtual void render(int x, int y, int ssRow, int ssCol, int w, int h) override{
+        called = true;
+        called_x = x; called_y = y; called_sprite_row = ssRow; called_sprite_col = ssCol; called_sprite_width = w; called_sprite_height = h;
+        //Texture::render(x, y, ssRow, ssCol, w, h);
+    }
+    SDL_Renderer *getSDLRenderer(){
+        return myWin.sdlRenderer;
+    }
+};
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-
 using namespace std;
 
-TEST_CASE_METHOD(Texture, "Testing the Texture Class."){
-    SECTION("Testing that the default constructor"){
-        REQUIRE(myTexture == nullptr);
-        REQUIRE(myWidth == -1);
-        REQUIRE(myHeight == -1);
-        REQUIRE(myTileWidth == -1);
-        REQUIRE(myTileHeight == -1);
-
-        SECTION("Loading a file that doesn't exist should throw."){
-            REQUIRE_THROWS(loadFile("/this/file/doesnt/exist.png", 1, 1));
+TEST_CASE("Testing the Tile Constructor."){
+    for(int i = 0; i < 10; i++){
+        // Generate Some Random Info
+        int myX = rand() % 640, myY = rand() % 480;
+        vector<pair<int, int>> myV;
+        int n = (rand() % 5) + 1;
+        stringstream ss;
+        myV.push_back({rand() % 15, rand() % 15});
+        for(int j = 1; j < n; j++){
+            myV.push_back({rand() % 15, rand() % 15});
         }
+        ss << "{";
+        for(size_t i = 0; i < myV.size()-1; i++){
+            auto& p = myV[i];
+            ss << "{" << p.first << "," << p.second << "},";
+        }
+        auto& p = myV[myV.size()-1];
+        ss << "{" << p.first << "," << p.second << "}";
+        ss << "}";
+        TileType myT = static_cast<TileType>(rand()%9);
+        int myW = rand() % 3, myH = rand() % 3;
 
-        SECTION("Testing against sprites.png"){
-            REQUIRE_NOTHROW(loadFile(SPRITEFILENAME, 20, 10));
-            REQUIRE(myWidth == 356);
-            REQUIRE(myHeight == 316);
-            REQUIRE(myTileWidth == 20);
-            REQUIRE(myTileHeight == 10);
-            REQUIRE(myTexture != nullptr);
+        // Create a tile with the random info
+        Tile myTile(myX, myY, myV, myT, myW, myH);
+        //INFO("Created myTile(" << myX << "," << myY << "," << myV << "," << myT << "," << myW << "," << myH << ")");
+        INFO("Created Tile(" << myX << "," << myY << "," << ss.str() << "," << myT << "," << myW << "," << myH << ")");
+        SECTION("Checking the co-ordinates in the window."){
+            REQUIRE(myTile.x == myX);
+            REQUIRE(myTile.y == myY);
 
-            GIVEN("A correctly loaded texture"){
-                THEN("Try to free it."){
-                    free();
+            SECTION("Checking the type is saved correctly."){
+                REQUIRE(myTile.myType == myT);
 
-                    REQUIRE(myTexture == nullptr);
-                    REQUIRE(myWidth == -1);
-                    REQUIRE(myHeight == -1);
-                    REQUIRE(myTileWidth == -1);
-                    REQUIRE(myTileHeight == -1);
-                }
+                SECTION("Checking the dimensions are saved correctly."){
+                    REQUIRE(myTile.w == myW);
+                    REQUIRE(myTile.h == myH);
 
-                THEN("Test the Texture Accessor Methods and Render(int,int,SDL_Rect)."){
-                    REQUIRE(myWidth == sheetWidth());
-                    REQUIRE(myHeight == sheetHeight());
-                    REQUIRE(myTileWidth == tileWidth());
-                    REQUIRE(myTileHeight == tileHeight());
-                    REQUIRE_NOTHROW(loadFile(SPRITEFILENAME, 20, 10));
-                    REQUIRE(myWidth == sheetWidth());
-                    REQUIRE(myHeight == sheetHeight());
-                    REQUIRE(myTileWidth == tileWidth());
-                    REQUIRE(myTileHeight == tileHeight());
+                    SECTION("Checking the frames are saved correctly."){
+                        REQUIRE(myTile.myFrames.size() == myV.size());
+                        for(size_t j = 0; j < myV.size(); j++){
+                            REQUIRE(myTile.myFrames[j].first == myV[j].first);
+                            REQUIRE(myTile.myFrames[j].second == myV[j].second);
+                        }
 
-                    WARN("Running render(0, 0, {0,0,sheetWidth(),sheetHeight()}) - This doesn't actually test anything but you should see the sprite sheet on the window.");
-
-                    REQUIRE_NOTHROW(loadFile(SPRITEFILENAME, 20, 20));
-                    SDL_RenderClear(myWin.sdlRenderer);
-                    render(0,0,SDL_Rect{0,0,sheetWidth(),sheetHeight()});
-                    SDL_RenderPresent(myWin.sdlRenderer);
-                    SDL_Event e;
-
-                    for(auto i = 0; i < 50;i++){
-                        SDL_PollEvent(&e);
-                        this_thread::sleep_for(chrono::milliseconds(100));
-                    }
-
-                    WARN("Running render(20,20*5, {20,20*5,20,20}) - This doesn't actually test anything but you should see the red ghost on the window.");
-                    SDL_RenderClear(myWin.sdlRenderer);
-                    render(20,20*5, SDL_Rect{20,20*5,20,20});
-                    SDL_RenderPresent(myWin.sdlRenderer);
-                    for(auto i = 0; i < 50;i++){
-                        SDL_PollEvent(&e);
-                        this_thread::sleep_for(chrono::milliseconds(100));
-                    }
-                    SECTION("Testing getSpritePosition & render(int,int,int,int,int,int)"){
-                        REQUIRE_NOTHROW(loadFile(SPRITEFILENAME, 30, 20));
-                        SDL_Rect a;
-                        a = getSpritePosition(0,0);
-                        REQUIRE(a.x == 0);
-                        REQUIRE(a.y == 0);
-                        REQUIRE(a.w == 30);
-                        REQUIRE(a.h == 20);
-
-                        a = getSpritePosition(1,1,1,1);
-                        REQUIRE(a.x == 30);
-                        REQUIRE(a.y == 20);
-                        REQUIRE(a.w == 30);
-                        REQUIRE(a.h == 20);
-
-                        a = getSpritePosition(5,7,1,1);
-                        REQUIRE(a.x == 210);
-                        REQUIRE(a.y == 100);
-                        REQUIRE(a.w == 30);
-                        REQUIRE(a.h == 20);
-
-                        a = getSpritePosition(1,15,2,2);
-                        REQUIRE(a.x == 450);
-                        REQUIRE(a.y == 20);
-                        REQUIRE(a.w == 60);
-                        REQUIRE(a.h == 40);
-
-                        SECTION("Running render Version 2 - This doesn't actually test anything."){
-                            REQUIRE_NOTHROW(loadFile(SPRITEFILENAME, 20, 20));
-                            WARN("Running render(0,0,1,1,3,4) - This doesn't actually test anything but you should see all the different pacman images.");
-                            SDL_RenderClear(myWin.sdlRenderer);
-                            render(0,0,1,1,3,4);
-                            SDL_RenderPresent(myWin.sdlRenderer);
-                            SDL_Event e;
-
-                            for(auto i = 0; i < 2;i++){
-                                SDL_PollEvent(&e);
-                                this_thread::sleep_for(chrono::milliseconds(1000));
-                            }
-                            WARN("Running render(20*c, 20*r, r,c, 1, 1) - This doesn't actually test anything but you should see the program cycling through sprites in a 10x10 window.");
-
-                            for(int r = 0; r < 10; r++){
-                                for(int c = 0; c < 10; c++){
-                                    SDL_RenderClear(myWin.sdlRenderer);
-                                    render(20*c, 20*r, r,c, 1, 1);
-                                    SDL_RenderPresent(myWin.sdlRenderer);
-                                    SDL_PollEvent(&e);
-                                    this_thread::sleep_for(chrono::milliseconds(100));
+                        SECTION("Testing Renderer"){
+                            //WARN("Render testing just checks that you're calling render with the correct arguments. Nothing will be displayed yet.");
+                            Tex2 myTexture;
+                            myTexture.loadFile(SPRITEFILENAME, 20, 20);
+                            for(int f = 0; f < 20; f++){
+                                INFO("  Rendering Frame " << f);
+                                myTile.render(&myTexture, f);
+                                if(myTexture.called != true){
+                                    FAIL("You didn't call the row/col version of render.");
                                 }
+                                if(myTexture.called_x != myX){
+                                    FAIL("Incorrect X co-ordinate: Expected " << myX << ", Received: " << myTexture.called_x);
+                                }
+                                if(myTexture.called_y != myY){
+                                    FAIL("Incorrect Y co-ordinate: Expected " << myY << ", Received: " << myTexture.called_y);
+                                }
+                                if(myTexture.called_sprite_row != myV[f % myV.size()].first){
+                                    FAIL("Incorrect sprite row: Expected " << myV[f % myV.size()].first << ", Received: " << myTexture.called_sprite_row);
+                                }
+                                if(myTexture.called_sprite_col != myV[f % myV.size()].second){
+                                    FAIL("Incorrect sprite col: Expected " << myV[f % myV.size()].second << ", Received: " << myTexture.called_sprite_col);
+                                }
+                                //SECTION("Checking correct animation dimensions?"){
+                                //REQUIRE(myTexture.called_sprite_width == myW);
+                                if(myTexture.called_sprite_width != myW){
+                                    FAIL("Incorrect sprite width: Expected " << myW << ", Received: " << myTexture.called_sprite_width);
+                                }
+                                //REQUIRE(myTexture.called_sprite_height == myH);
+                                if(myTexture.called_sprite_height != myH){
+                                    FAIL("Incorrect sprite height: Expected " << myH << ", Received: " << myTexture.called_sprite_height);
+                                }
+                                myTexture.called = false;
                             }
                         }
                     }

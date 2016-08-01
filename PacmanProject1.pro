@@ -10,10 +10,12 @@ LIBS += -lSDL2 -lSDL2_image
 SOURCES += \
     texture.cpp \
     window.cpp \
+    tile.cpp \
     test.cpp
 
 HEADERS += \
     texture.h \
+    tile.h \
     window.h
 
 DEFINES += SPRITEFILENAME=\\\"$$PWD/sprites.png\\\"
