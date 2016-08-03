@@ -14,14 +14,25 @@ int Tile::tileHeight = -1;
  */
 Tile::Tile(int windowX, int windowY, std::vector<std::pair<int, int> > frames, TileType t, int spriteWidth, int spriteHeight)
 {
-
+	x = windowX;
+	y = windowY;
+	myType = t;
+	myFrames = frames;
+	w = spriteWidth;
+	h = spriteHeight;
 }
 /**
  * @brief Tile::render Uses the texture object to render a frame from the current tile.
  * @param t The Texture object to use.
  * @param frame The frame % numFrames that should be rendered.
  */
-void Tile::render(Texture *t, int frame)
+void Tile::render(Texture *tex, int frame)
 {
+	int n = frame % myFrames.size();
+	int r = (myFrames[n]).first;
+	int c = (myFrames[n]).second;
 
+	SDL_Rect myRect = {x, y, w, h};
+
+	tex->render(x, y, r, c, w, h);
 }

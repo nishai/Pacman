@@ -1,4 +1,4 @@
-#include "texture.h"
+ #include "texture.h"
 #include "stdexcept"
 
 using namespace std;
@@ -112,9 +112,9 @@ void Texture::render(int x, int y, SDL_Rect src)
 void Texture::render(int x, int y, int ssRow, int ssCol, int w, int h)
 {
     // Get the SDL_Rect source using getSpritePosition
-
+    SDL_Rect myRect = getSpritePosition(ssRow, ssCol, w, h);
     // Call the other version of render
-
+    render(x, y, myRect);
 }
 
 /**
