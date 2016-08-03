@@ -5,6 +5,7 @@
 #include "window.h"
 #include "texture.h"
 #include "tile.h"
+#include "helpers.h"
 
 using namespace std;
 
@@ -31,10 +32,14 @@ int main()
         }
 
         Tile pm(0,0,{ {1,1}, {1,2}, {1,1}, {1,3}},Pacman,1,1);
+        vector<Tile> testTiles = getTestTiles();
 
         SDL_SetRenderDrawColor(myTexture.myWin.sdlRenderer, 0, 0, 0, 0xFF);
         SDL_RenderClear(myTexture.myWin.sdlRenderer);
-        pm.render(&myTexture, frame);
+        //pm.render(&myTexture, frame);
+        for (int i = 0; i < testTiles.size(); i++){
+            testTiles[i].render(&myTexture, frame);
+        }
         SDL_RenderPresent(myTexture.myWin.sdlRenderer);
 
         frame++;
