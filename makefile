@@ -1,4 +1,4 @@
-SRC=texture.cpp window.cpp tile.cpp main.cpp
+SRC=texture.cpp window.cpp tile.cpp main.cpp helpers.cpp
 OBJ=$(SRC:%.cpp=%.o)
 
 LFLAGS=-lSDL2 -lSDL2_image

@@ -11,11 +11,13 @@ SOURCES += \
     texture.cpp \
     window.cpp \
     tile.cpp \
+    helpers.cpp \
     main.cpp
 
 HEADERS += \
     texture.h \
     tile.h \
+    helpers.h \
     window.h
 
 DEFINES += SPRITEFILENAME=\\\"$$PWD/sprites.png\\\"

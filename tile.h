@@ -12,6 +12,9 @@
 /// later when we code the game logic.
 enum TileType{Pacman, MrsPacman, GhostR, GhostP, GhostB, GhostY,
               Wall, Blank, Food};
+
+enum Direction{Up, Down, Left, Right};
+
 /**
  * @brief The Tile class representing an animated sprite to render to the screen.
  */
