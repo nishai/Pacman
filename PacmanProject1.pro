@@ -11,7 +11,7 @@ SOURCES += \
     texture.cpp \
     window.cpp \
     tile.cpp \
-    test.cpp
+    main.cpp
 
 HEADERS += \
     texture.h \
