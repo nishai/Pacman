@@ -9,10 +9,16 @@
  * @param t Type of character.
  */
 Character::Character(int myX, int myY, TileType t)
-    : uTile(/* ??? */), dTile(/* ??? */), lTile(/* ??? */), rTile(/* ??? */)
+    : uTile(myX, myY, {{}}, t, 1, 1), dTile(myX, myY, {{}}, t, 1, 1), lTile(myX, myY, {{}}, t, 1, 1), rTile(myX, myY, {{}}, t, 1, 1)
 {
     // The tiles above have to be constructed with the class above.
     // Why can't we rather just set their value in here using uTile = makeTile(...)?
+    x = myX;
+    y = myY;
+    uTile = makeTile(x, y, t, Up);
+    dTile = makeTile(x, y, t, Down);
+    lTile = makeTile(x, y, t, Left);
+    rTile = makeTile(x, y, t, Right);
 }
 
 /**
@@ -22,7 +28,12 @@ Character::Character(int myX, int myY, TileType t)
  */
 void Character::render(Texture *t, int frame)
 {
-
+    switch (dir) {
+        case Up: uTile.render(t, frame); break;
+        case Down: dTile.render(t, frame); break;
+        case Left: lTile.render(t, frame); break;
+        case Right: rTile.render(t, frame); break;
+    }
 }
 /**
  * @brief Character::getNextPosition Calculates the position of the character based on direction.

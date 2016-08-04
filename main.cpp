@@ -6,6 +6,7 @@
 #include "texture.h"
 #include "tile.h"
 #include "helpers.h"
+#include "character.h"
 
 using namespace std;
 
@@ -18,12 +19,13 @@ int main()
     myTexture.loadFile(spriteFilename, 20, 20);
     bool quit = false;
     int frame = 0;
-
+    Character Pac(0,0,Pacman);
     while(!quit){
         // Handle any SDL Events
         // Such as resize, clicking the close button,
-        //  and process and key press events.
+        //  and process and key press events.m
         SDL_Event e;
+        Pac.handle_event(e);
 
         while(SDL_PollEvent(&e)){
             if(e.type == SDL_QUIT){
@@ -32,14 +34,10 @@ int main()
         }
 
         Tile pm(0,0,{ {1,1}, {1,2}, {1,1}, {1,3}},Pacman,1,1);
-        vector<Tile> testTiles = getTestTiles();
-
         SDL_SetRenderDrawColor(myTexture.myWin.sdlRenderer, 0, 0, 0, 0xFF);
         SDL_RenderClear(myTexture.myWin.sdlRenderer);
         //pm.render(&myTexture, frame);
-        for (int i = 0; i < testTiles.size(); i++){
-            testTiles[i].render(&myTexture, frame);
-        }
+        Pac.render(&myTexture, frame);
         SDL_RenderPresent(myTexture.myWin.sdlRenderer);
 
         frame++;
