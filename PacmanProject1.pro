@@ -13,6 +13,7 @@ SOURCES += \
     tile.cpp \
     helpers.cpp \
     character.cpp \
+    world.cpp \
     main.cpp
 
 HEADERS += \
@@ -20,6 +21,8 @@ HEADERS += \
     tile.h \
     helpers.h \
     character.h \
+    world.h \
     window.h
 
 DEFINES += SPRITEFILENAME=\\\"$$PWD/sprites.png\\\"
+DEFINES += MAZEFILENAME=\\\"$$PWD/maze1.txt\\\"
