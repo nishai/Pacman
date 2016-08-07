@@ -34,13 +34,13 @@ int main()
                 quit = true;
             }
             myWorld.pacman.handle_event(e);
-            pac.handle_event(e);
         }
+
+        myWorld.UpdateWorld();
 
         SDL_SetRenderDrawColor(myTexture.myWin.sdlRenderer, 0, 0, 0, 0x00);
         SDL_RenderClear(myTexture.myWin.sdlRenderer);
         myWorld.render(&myTexture, frame);
-        pac.render(&myTexture, frame);
         SDL_RenderPresent(myTexture.myWin.sdlRenderer);
 
         frame++;

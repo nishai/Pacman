@@ -84,10 +84,8 @@ void World::render(Texture *t, int frame)
             if (maze[i][j].myType != Pacman){
     			maze[i][j].render(t, frame);
             }
-            else {
-                pacman.render(t, frame);
-            }   
 	    }
+        pacman.render(t, frame);
     }
 }
 
@@ -101,5 +99,7 @@ void World::render(Texture *t, int frame)
  */
 bool World::UpdateWorld()
 {
-
+    SDL_Rect myRect = pacman.getNextPosition();
+    pacman.x = myRect.x;
+    pacman.y = myRect.y;
 }

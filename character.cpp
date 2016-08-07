@@ -61,7 +61,24 @@ void Character::render(Texture *t, int frame)
  */
 SDL_Rect Character::getNextPosition()
 {
-
+    switch (dir){
+        case Up: {
+            return {x, y-5, uTile.w, uTile.h};
+            break;
+        }
+        case Down: {
+            return {x, y+5, dTile.w, dTile.h};
+            break;
+        }
+        case Left: {
+            return {x-5, y, lTile.w, lTile.h};
+            break;
+        }
+        case Right: {
+            return {x+5, y, rTile.w, rTile.h};
+            break;
+        }
+    }
 }
 /**
  * @brief Character::handle_event Handles the SDL Events for Arrow Keypresses
