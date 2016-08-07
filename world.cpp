@@ -1,6 +1,7 @@
 #include "world.h"
 #include "helpers.h"
 #include "character.h"
+#include "tile.h"
 
 #include <string>
 #include <vector>
@@ -22,10 +23,50 @@ World::World(string filename, int tileWidth, int tileHeight)
     : food(0), points(0), ready(true), pacman(0,0,Pacman)
 {
     ifstream f(filename);
+    string line;
+
     if(!f.is_open())
         throw runtime_error("Couldn't open maze file " + filename);
     // Code to read in the file...
+    f>>rows>>cols;
+    Tile myTile(0, 0, {{}}, Blank, 1, 1);
+   	TileType t;
+    getline(f, line); //get rid of the blank line
 
+    vector<Tile> empty;
+    for (int i = 0; i < rows; i++){
+        maze.push_back(empty);
+    }
+
+    for (int i = 0; i < rows; ++i)
+    {
+        getline(f, line);
+    	for (int j = 0; j < cols; j++){
+    		switch (line[j]){
+    			case 'x': t = Wall; break;
+    			case ' ': t = Blank; break;
+    			case '.': {
+                    t = Food;
+                    food++;
+                    break;
+                }
+    			case '0': {
+                    t = Pacman;
+                    pacman.x = j * tileWidth;
+                    pacman.y = i * tileHeight;
+                    break;
+                }
+    			case '1': t = GhostR; break;
+    			case '2': t = GhostY; break;
+    			case '3': t = GhostP; break;
+    			case '4': t = GhostB; break;
+                default: t = Wall; break;
+    		}
+
+    		myTile = makeTile(j*tileWidth, i*tileHeight, t, Up);
+    		maze[i].push_back(myTile);				    
+    	} 
+    }
 }
 
 /**
@@ -37,7 +78,17 @@ World::World(string filename, int tileWidth, int tileHeight)
  */
 void World::render(Texture *t, int frame)
 {
-
+	for (int i = 0; i < rows; i++){
+	    for (int j = 0; j < cols; ++j)
+        {
+            if (maze[i][j].myType != Pacman){
+    			maze[i][j].render(t, frame);
+            }
+            else {
+                pacman.render(t, frame);
+            }   
+	    }
+    }
 }
 
 /**

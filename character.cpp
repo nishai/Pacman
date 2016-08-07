@@ -29,10 +29,30 @@ Character::Character(int myX, int myY, TileType t)
 void Character::render(Texture *t, int frame)
 {
     switch (dir) {
-        case Up: uTile.render(t, frame); break;
-        case Down: dTile.render(t, frame); break;
-        case Left: lTile.render(t, frame); break;
-        case Right: rTile.render(t, frame); break;
+        case Up: {
+            uTile.x = x;
+            uTile.y = y;
+            uTile.render(t, frame);
+            break;
+        }
+        case Down: {
+            dTile.x = x;
+            dTile.y = y;
+            dTile.render(t, frame);
+            break;
+        }
+        case Left: {
+            lTile.x = x;
+            lTile.y = y;
+            lTile.render(t, frame);
+            break;
+        }
+        case Right: {
+            rTile.x = x;
+            rTile.y = y;
+            rTile.render(t, frame);
+            break;
+        }
     }
 }
 /**

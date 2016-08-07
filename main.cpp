@@ -7,6 +7,7 @@
 #include "tile.h"
 #include "helpers.h"
 #include "character.h"
+#include "world.h"
 
 using namespace std;
 
@@ -19,25 +20,27 @@ int main()
     myTexture.loadFile(spriteFilename, 20, 20);
     bool quit = false;
     int frame = 0;
-    Character Pac(0,0,Pacman);
+    World myWorld("maze1.txt", 20, 20);
+    Character pac(100, 180, Pacman);
+
     while(!quit){
         // Handle any SDL Events
         // Such as resize, clicking the close button,
         //  and process and key press events.m
         SDL_Event e;
-        Pac.handle_event(e);
 
         while(SDL_PollEvent(&e)){
             if(e.type == SDL_QUIT){
                 quit = true;
             }
+            myWorld.pacman.handle_event(e);
+            pac.handle_event(e);
         }
 
-        Tile pm(0,0,{ {1,1}, {1,2}, {1,1}, {1,3}},Pacman,1,1);
-        SDL_SetRenderDrawColor(myTexture.myWin.sdlRenderer, 0, 0, 0, 0xFF);
+        SDL_SetRenderDrawColor(myTexture.myWin.sdlRenderer, 0, 0, 0, 0x00);
         SDL_RenderClear(myTexture.myWin.sdlRenderer);
-        //pm.render(&myTexture, frame);
-        Pac.render(&myTexture, frame);
+        myWorld.render(&myTexture, frame);
+        pac.render(&myTexture, frame);
         SDL_RenderPresent(myTexture.myWin.sdlRenderer);
 
         frame++;
