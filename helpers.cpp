@@ -1,5 +1,6 @@
 #include "helpers.h"
 #include "tile.h"
+#include <iostream>
 
 using namespace std;
 
@@ -119,18 +120,26 @@ Tile makeTile(int x, int y, TileType t, Direction dir)
 
 }
 
-bool collision(SDL_Rect a, SDL_Rect b, int a_off, int b_off)
+bool collision(SDL_Rect a, SDL_Rect b, int a_off, int b_off) // a: pacman next      b: maze
 {
     // If A finishs above B - No Collision
-
     // If A starts below B - No Collision
-
     // If the right of A is left of B - No Collision
-
     // If the left of A is right of B - No Collision
-
-
     // If we get here there must be an overlap - Collision
+
+    if ((a.y - a_off)  < (b.y - b.h + b_off)){ //correct
+        return false;
+    }
+    if ((a.y + a_off) > (b.y + b.h - b_off)){ //correct
+        return false;
+    }
+    if ((a.x + a.h + a_off) < (b.x - b_off - b_off - b_off)){
+        return false;
+    }
+    if ((a.x + a_off) > (b.x + b.w - b_off)){ //correct
+        return false;
+    }
     return true;
 }
 

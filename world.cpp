@@ -99,7 +99,52 @@ void World::render(Texture *t, int frame)
  */
 bool World::UpdateWorld()
 {
-    SDL_Rect myRect = pacman.getNextPosition();
-    pacman.x = myRect.x;
-    pacman.y = myRect.y;
+    SDL_Rect next = pacman.getNextPosition();
+    SDL_Rect block;
+    bool col = false;
+    bool eat = false;
+
+    for (int i = 0; i < rows; i++){
+        for (int j = 0; j < cols; ++j)
+        {
+            switch (maze[i][j].myType){
+                case Wall: {
+                    block.x = maze[i][j].x;
+                    block.y = maze[i][j].y;
+                    block.w = maze[i][j].w * 20;
+                    block.h = maze[i][j].h * 20;
+
+                    if (collision(next, block, 3, 2)){
+                        col = true;
+                    }
+                    break;
+                }
+                case Food:{
+                    block.x = maze[i][j].x;
+                    block.y = maze[i][j].y;
+                    block.w = maze[i][j].w * 20;
+                    block.h = maze[i][j].h * 20;
+
+                    if (collision(next, block, 5, 5)){
+                        eat = true;
+                        maze[i][j] = makeTile(i * maze[i][j].tileWidth, i * maze[i][j].tileHeight, Blank, Up);
+                        cout<<"Points: "<<points<<endl;
+                    }
+                }
+                default: break;
+            }
+        }
+    }
+
+    if  (col == false){
+        pacman.x = next.x;
+        pacman.y = next.y;
+    }
+
+    if (eat){
+        points++;
+        food--;
+    }
+    
+    return ready;
 }

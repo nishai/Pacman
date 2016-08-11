@@ -21,7 +21,6 @@ int main()
     bool quit = false;
     int frame = 0;
     World myWorld("maze1.txt", 20, 20);
-    Character pac(100, 180, Pacman);
 
     while(!quit){
         // Handle any SDL Events
