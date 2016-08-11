@@ -114,7 +114,7 @@ bool World::UpdateWorld()
                     block.w = maze[i][j].w * 20;
                     block.h = maze[i][j].h * 20;
 
-                    if (collision(next, block, 3, 2)){
+                    if (collision(next, block, 2, 3)){
                         col = true;
                     }
                     break;
@@ -125,10 +125,10 @@ bool World::UpdateWorld()
                     block.w = maze[i][j].w * 20;
                     block.h = maze[i][j].h * 20;
 
-                    if (collision(next, block, 5, 5)){
+                    if (collision(next, block, 1, 1)){
                         eat = true;
                         maze[i][j] = makeTile(i * maze[i][j].tileWidth, i * maze[i][j].tileHeight, Blank, Up);
-                        cout<<"Points: "<<points<<endl;
+                        goto x;
                     }
                 }
                 default: break;
@@ -136,15 +136,19 @@ bool World::UpdateWorld()
         }
     }
 
-    if  (col == false){
+    x:if  (col == false){
         pacman.x = next.x;
         pacman.y = next.y;
     }
 
     if (eat){
         points++;
-        food--;
+        cout<<"Points: "<<points<<endl;
     }
-    
+
+    if (food == points){
+        ready = false;
+    }
+
     return ready;
 }
