@@ -25,6 +25,10 @@ public:
     /** True: the game can advance another step. False: the game is finished.*/
 
     Character pacman;               ///< Character object representing pacman.
+    Character red;
+    Character blue;
+    Character pink;
+    Character yellow;
 
     std::vector<std::vector<Tile>> maze; ///< Stores maze Tile objects, used to store the background tile states.
 
